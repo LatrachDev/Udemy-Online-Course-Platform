@@ -79,11 +79,4 @@ Youdemy est une plateforme de cours en ligne visant à révolutionner l’appren
 
 ---
 
-### Contribuez
-N’hésitez pas à participer à l’amélioration de Youdemy en proposant des suggestions, signalant des problèmes ou en soumettant des pull requests.
-
-### License
-Ce projet est sous licence [MIT](LICENSE).
-
-**Bon apprentissage avec Youdemy !**
 
