@@ -15,7 +15,7 @@
             <a href="#about" class="hover:text-blue-600">About</a>
             <a href="#courses" class="hover:text-blue-600">Courses</a>
             <a href="#contact" class="hover:text-blue-600">Contact</a>
-            <a href="signup.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sign Up</a>
+            <a href="signup.php" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sign Up</a>
         </nav>
         </div>
     </header>
@@ -24,7 +24,7 @@
         <div class="container mx-auto text-center">
             <h1 class="text-4xl font-bold mb-4">Welcome to Youdemy</h1>
             <p class="text-lg mb-6">Learn from the best instructors anytime, anywhere.</p>
-            <a href="signup.html" class="bg-white text-blue-600 px-6 py-3 rounded font-medium shadow-md hover:bg-gray-200">Get Started</a>
+            <a href="signup.php" class="bg-white text-blue-600 px-6 py-3 rounded font-medium shadow-md hover:bg-gray-200">Get Started</a>
         </div>
     </section>
 

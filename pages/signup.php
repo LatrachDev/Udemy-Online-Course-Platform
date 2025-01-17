@@ -1,5 +1,6 @@
 <?php
-  require __DIR__ . '../includes/auth.php';
+  require __DIR__ . '/../includes/auth.php';
+  
 ?>
 
 <!DOCTYPE html>
