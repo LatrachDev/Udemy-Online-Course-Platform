@@ -96,7 +96,7 @@ if (isset($_POST['login'])) {
             }
             if ($return['role'] === 'teacher') 
             {
-                header('Location: teacher.php');
+                header('Location: /teacher/teacher.php');
                 exit;
             }           
         }
