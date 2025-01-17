@@ -4,7 +4,6 @@ class User {
     private $conn;
     private $table_name = "users";
 
-    // Properties
     public $name;
     public $email;
     public $password;
@@ -14,15 +13,12 @@ class User {
         $this->conn = $db;
     }
 
-    // Add a new user
     public function addUser($name, $email, $password, $role) {
         $query = "INSERT INTO " . $this->table_name . " (name, email, password, role) VALUES (:name, :email, :password, :role)";
         $stmt = $this->conn->prepare($query);
 
-        // Hash the password
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        // Bind parameters
         $stmt->bindParam(":name", $name);
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":password", $hashed_password);
@@ -35,7 +31,6 @@ class User {
         }
     }
 
-    // Login user
     public function loginUser($email, $password) {
         $query = "SELECT id, password, role FROM " . $this->table_name . " WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
@@ -65,5 +60,7 @@ class User {
             ];
         }
     }
+
+
 }
 ?>
