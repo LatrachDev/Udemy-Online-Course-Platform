@@ -10,7 +10,7 @@
     <div class="text-center">
         <h1 class="text-6xl font-bold text-red-600">403</h1>
         <p class="text-xl text-gray-600 mt-4">Sorry, you don’t have permission to access this page.</p>
-        <a href="../../pages/index.php" class="mt-6 inline-block bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
+        <a href="../../index.php" class="mt-6 inline-block bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
             Go Home
         </a>
     </div>
