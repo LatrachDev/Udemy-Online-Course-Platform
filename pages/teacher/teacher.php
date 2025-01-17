@@ -1,24 +1,10 @@
-<?php
-    session_start();
-
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header('Location: errors/403.php');
-        exit;
-    }
-
-    require_once '../../includes/functions.php';
-    
-
-    $tags = fetchAllTags($conn);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Management - YouDemy</title>
+    <title>Teacher Dashboard - YouDemy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -39,14 +25,14 @@
             </div>
             <nav class="mt-6">
                 <div class="px-4 space-y-2">
-                    <a href="dashboard.php" class="block px-4 py-2 text-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg">
+                    <a href="teacher_dashboard.php" class="block px-4 py-2 text-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg">
                         Dashboard
                     </a>
-                    <a href="usermanagement.php" class="block px-4 py-2 text-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg">
-                        User Management
+                    <a href="teacher_courses.php" class="block px-4 py-2 rounded-lg bg-indigo-600 text-white">
+                        Course Management
                     </a>
-                    <a href="contentmanagement.php" class="block px-4 py-2 rounded-lg bg-indigo-600 text-white">
-                        Content Management
+                    <a href="teacher_statistics.php" class="block px-4 py-2 text-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg">
+                        Statistics
                     </a>
                     <a href="logout.php" class="px-4 py-2 text-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,21 +66,89 @@
                                 class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
                         </button>
                         <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full shadow-md border flex justify-center items-center font-bold bg-indigo-600 text-white">A</div>
-                            <span class="text-gray-700">Admin</span>
+                            <div class="w-10 h-10 rounded-full shadow-md border flex justify-center items-center font-bold bg-indigo-600 text-white">T</div>
+                            <span class="text-gray-700">Teacher</span>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content Management Content -->
+            <!-- Teacher Dashboard Content -->
             <main class="p-6">
-                <h1 class="text-2xl font-bold text-gray-800 mb-6">Content Management</h1>
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">Course Management</h1>
 
-                <!-- Courses Section -->
+                <!-- Add New Course Section -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                     <div class="p-6 border-b">
-                        <h2 class="text-xl font-bold text-gray-800">Courses</h2>
+                        <h2 class="text-xl font-bold text-gray-800">Add New Course</h2>
+                    </div>
+                    <div class="p-6">
+                        <form action="add_course.php" method="POST" enctype="multipart/form-data">
+                            <div class="space-y-4">
+                                <!-- Title -->
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-700">Course Title</label>
+                                    <input type="text" id="title" name="title" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
+                                </div>
+
+                                <!-- Description -->
+                                <div>
+                                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea id="description" name="description" rows="3" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"></textarea>
+                                </div>
+
+                                <!-- Content (Video or Document) -->
+                                <div>
+                                    <label for="content" class="block text-sm font-medium text-gray-700">Content (Video or Document)</label>
+                                    <input type="file" id="content" name="content" accept="video/*, .pdf, .doc, .docx" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
+                                </div>
+
+                                <!-- Tags (Select Existing Tags) -->
+                                <div>
+                                    <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+                                    <select id="tags" name="tags[]" multiple
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
+                                        <?php
+                                        // Example PHP code to fetch existing tags from the database
+                                        $tags = ["JavaScript", "Python", "Web Development", "Data Science", "Frontend", "Backend"];
+                                        foreach ($tags as $tag) {
+                                            echo "<option value='$tag'>$tag</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <p class="mt-1 text-sm text-gray-500">Hold <kbd>Ctrl</kbd> (Windows) or <kbd>Command</kbd> (Mac) to select multiple tags.</p>
+                                </div>
+
+                                <!-- Category -->
+                                <div>
+                                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                                    <select id="category" name="category" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
+                                        <option value="Web Development">Web Development</option>
+                                        <option value="Data Science">Data Science</option>
+                                        <option value="Graphic Design">Graphic Design</option>
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                                        Add Course
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Manage Courses Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                    <div class="p-6 border-b">
+                        <h2 class="text-xl font-bold text-gray-800">Manage Courses</h2>
                     </div>
                     <div class="p-6">
                         <div class="overflow-x-auto">
@@ -120,6 +174,7 @@
                                             <div class="flex gap-2">
                                                 <button class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button>
                                                 <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Enrollments</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -136,6 +191,7 @@
                                             <div class="flex gap-2">
                                                 <button class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button>
                                                 <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Enrollments</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -145,85 +201,29 @@
                     </div>
                 </div>
 
-                <!-- Categories Section -->
+                <!-- Statistics Section -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                     <div class="p-6 border-b">
-                        <h2 class="text-xl font-bold text-gray-800">Categories</h2>
+                        <h2 class="text-xl font-bold text-gray-800">Statistics</h2>
                     </div>
                     <div class="p-6">
-                        <div class="flex flex-wrap gap-2">
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Web Development
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Data Science
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Graphic Design
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tags Section -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-                    <div class="p-6 border-b">
-                        <h2 class="text-xl font-bold text-gray-800">Tags</h2>
-                    </div>
-                    <div class="p-6">
-                        <!-- add tags -->
-                        <form action="addTags.php" method="POST">
-                            <div class="mb-6">
-                                <label for="tagsAdd" class="block text-sm font-medium text-gray-700 mb-2">Add Multiple Tags</label>
-                                <div class="flex gap-4">
-                                    <input type="text" id="tagsAdd" name="tags"
-                                        class="p-2 border flex-1 rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
-                                        placeholder="Enter tags separated by commas (e.g., JavaScript, Python, Web Development)">
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
-                                        Add Tags
-                                    </button>
-                                </div>
-                                <p class="mt-1 text-sm text-gray-500">Tags will be automatically converted to lowercase and trimmed</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Number of Students -->
+                            <div class="bg-indigo-50 p-6 rounded-lg">
+                                <h3 class="text-lg font-semibold text-indigo-600">Number of Enrolled Students</h3>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">1,234</p>
                             </div>
-                        </form>
 
-                        <!-- Existing Tags -->
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Existing Tags</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <?php foreach($tags as $tag) : ?>
+                            <!-- Number of Courses -->
+                            <div class="bg-indigo-50 p-6 rounded-lg">
+                                <h3 class="text-lg font-semibold text-indigo-600">Number of Courses</h3>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">15</p>
+                            </div>
 
-                                <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                    <?= $tag['name'] ?>
-                                    <button class="ml-2 hover:text-indigo-700">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </span>
-
-                                <?php endforeach ?>
-                               
+                            <!-- Other Statistics -->
+                            <div class="bg-indigo-50 p-6 rounded-lg">
+                                <h3 class="text-lg font-semibold text-indigo-600">Other Statistics</h3>
+                                <p class="text-gray-800 mt-2">Completion Rate: 85%</p>
                             </div>
                         </div>
                     </div>
