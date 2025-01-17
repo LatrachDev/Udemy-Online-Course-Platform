@@ -86,7 +86,7 @@ if (isset($_POST['login'])) {
 
             if ($return['role'] === 'admin') 
             {
-                header('Location: dashboard.php');
+                header('Location: /admin/dashboard.php');
                 exit;
             }
             if ($return['role'] === 'student') 
