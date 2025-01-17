@@ -1,3 +1,10 @@
+<?php
+    require_once '../../includes/functions.php';
+    // require __DIR__ . '/../includes/functions.php';
+
+    $totalCourses = getTotalCourses($conn);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -88,7 +95,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <p class="text-2xl font-bold text-gray-800">1,432</p>
+                        <p class="text-2xl font-bold text-gray-800"><?= $totalCourses ?></p>
                     </div>
 
                     <!-- Distribution by Category -->
