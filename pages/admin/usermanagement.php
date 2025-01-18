@@ -8,6 +8,7 @@
 
     require_once '../../includes/functions.php';
 
+    // for update the status of the user
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['new_status'])) 
     {
         $user_id = $_POST['user_id'];
@@ -19,6 +20,25 @@
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':status', $new_status);
             $stmt->bindParam(':id', $user_id);
+
+            if ($stmt->execute()) 
+            {
+                header('Location: usermanagement.php');
+                exit;
+            }
+        }
+    }
+
+    // for remove the user
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) 
+    {
+        $delete_user = $_POST['delete_user'];
+
+        if (!empty($delete_user)) 
+        {
+            $query = "DELETE FROM users WHERE id = :id";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':id', $delete_user);
 
             if ($stmt->execute()) 
             {
@@ -142,12 +162,7 @@
                                                 </span>
                                             </td>
                                             <td class="p-4">
-                                                <!-- <div class="flex gap-2">
-                                                    <button class="px-3 py-1 bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition duration-300">Suspend</button>
-                                                    <button class="p-1 text-gray-500 hover:text-red-500 rounded-lg transition duration-300">
-                                                        <i class="fas fa-trash"></i> 
-                                                    </button>
-                                                </div> -->
+                                                
                                                 <form action="usermanagement.php" method="POST" class="inline">
                                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                                     <input type="hidden" name="new_status" value="<?= $user['status'] === 'active' ? 'banned' : 'active' ?>">
@@ -155,6 +170,14 @@
                                                         <?= $user['status'] === 'active' ? 'Suspend' : 'Activate' ?>
                                                     </button>
                                                 </form>
+
+                                                <form action="usermanagement.php" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                    <input type="hidden" name="delete_user" value="<?= $user['id'] ?>">
+                                                    <button type="submit" class="p-1 text-gray-500 hover:text-red-500 rounded-lg transition duration-300">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+
                                             </td>
                                             
                                         </tr>
