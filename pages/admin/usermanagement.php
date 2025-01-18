@@ -1,3 +1,36 @@
+<?php
+    session_start();
+
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+        header('Location: errors/403.php');
+        exit;
+    }
+
+    require_once '../../includes/functions.php';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['new_status'])) 
+    {
+        $user_id = $_POST['user_id'];
+        $new_status = $_POST['new_status'];
+
+        if (in_array($new_status, ['active', 'banned'])) 
+        {
+            $query = "UPDATE users SET status = :status WHERE id = :id";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':status', $new_status);
+            $stmt->bindParam(':id', $user_id);
+
+            if ($stmt->execute()) 
+            {
+                header('Location: usermanagement.php');
+                exit;
+            }
+        }
+    }
+    
+
+    $users = fetchAllUsers($conn);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +40,7 @@
     <title>User Management - YouDemy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -95,53 +129,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- User 1 -->
-                                    <tr class="border-t">
-                                        <td class="p-4 text-gray-800">John Doe</td>
-                                        <td class="p-4 text-gray-800">john@example.com</td>
-                                        <td class="p-4 text-gray-800">Student</td>
-                                        <td class="p-4">
-                                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Active</span>
-                                        </td>
-                                        <td class="p-4">
-                                            <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Suspend</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
 
-                                    <!-- User 2 -->
-                                    <tr class="border-t">
-                                        <td class="p-4 text-gray-800">Jane Smith</td>
-                                        <td class="p-4 text-gray-800">jane@example.com</td>
-                                        <td class="p-4 text-gray-800">Teacher</td>
-                                        <td class="p-4">
-                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Suspended</span>
-                                        </td>
-                                        <td class="p-4">
-                                            <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Activate</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <?php foreach($users as $user) : ?>
 
-                                    <!-- User 3 -->
-                                    <tr class="border-t">
-                                        <td class="p-4 text-gray-800">Michael Chen</td>
-                                        <td class="p-4 text-gray-800">michael@example.com</td>
-                                        <td class="p-4 text-gray-800">Admin</td>
-                                        <td class="p-4">
-                                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Active</span>
-                                        </td>
-                                        <td class="p-4">
-                                            <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Suspend</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        <tr class="border-t">
+                                            <td class="p-4 text-gray-800"><?= $user['name'] ?></td>
+                                            <td class="p-4 text-gray-800"><?= $user['email'] ?></td>
+                                            <td class="p-4 text-gray-800"><?= $user['role'] ?></td>
+                                            <td class="p-4">
+                                                <span class="px-2 py-1 <?= $user['status'] === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?> rounded-full text-sm">
+                                                    <?= $user['status'] ?>
+                                                </span>
+                                            </td>
+                                            <td class="p-4">
+                                                <!-- <div class="flex gap-2">
+                                                    <button class="px-3 py-1 bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition duration-300">Suspend</button>
+                                                    <button class="p-1 text-gray-500 hover:text-red-500 rounded-lg transition duration-300">
+                                                        <i class="fas fa-trash"></i> 
+                                                    </button>
+                                                </div> -->
+                                                <form action="usermanagement.php" method="POST" class="inline">
+                                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                    <input type="hidden" name="new_status" value="<?= $user['status'] === 'active' ? 'banned' : 'active' ?>">
+                                                    <button type="submit" class="px-3 py-1 <?= $user['status'] === 'active' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' ?> rounded-full hover:bg-red-200 transition duration-300">
+                                                        <?= $user['status'] === 'active' ? 'Suspend' : 'Activate' ?>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            
+                                        </tr>
+
+                                    <?php endforeach ?>
+                                                                        
                                 </tbody>
                             </table>
                         </div>
