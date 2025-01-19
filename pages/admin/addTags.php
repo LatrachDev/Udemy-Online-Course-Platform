@@ -44,7 +44,7 @@
                 }
             }
             $conn->commit();
-            // echo "Tags added successfully!";
+            header('Location: contentmanagement.php');
         }
         catch (Exception $e)
         {
