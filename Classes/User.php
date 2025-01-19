@@ -13,8 +13,8 @@ class User {
         $this->conn = $db;
     }
 
-    public function addUser($name, $email, $password, $role) {
-        $query = "INSERT INTO " . $this->table_name . " (name, email, password, role) VALUES (:name, :email, :password, :role)";
+    public function addUser($name, $email, $password, $role, $status) {
+        $query = "INSERT INTO " . $this->table_name . " (name, email, password, role, status) VALUES (:name, :email, :password, :role, :status)";
         $stmt = $this->conn->prepare($query);
 
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
@@ -23,6 +23,7 @@ class User {
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":password", $hashed_password);
         $stmt->bindParam(":role", $role);
+        $stmt->bindParam(":status", $status);
 
         if ($stmt->execute()) {
             return true;
