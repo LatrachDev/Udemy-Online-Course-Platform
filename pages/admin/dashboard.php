@@ -211,7 +211,6 @@
                                     <?php else : ?>
                                         <?php foreach($teachers as $teacher) : ?>
 
-
                                         <tr class="border-t">
                                             <td class="p-4 text-gray-800"><?= $teacher['name'] ?></td>
                                             <td class="p-4 text-gray-800"><?= $teacher['email'] ?></td>
