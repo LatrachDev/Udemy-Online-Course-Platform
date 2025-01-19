@@ -42,7 +42,9 @@ if (isset($_POST['signup']))
         } 
         else 
         {
-            $result = $user->addUser($name, $email, $password, $role);
+            $status = ($role === 'teacher') ? 'pending' : 'active';
+
+            $result = $user->addUser($name, $email, $password, $role, $status);
 
             if ($result === true) 
             {
