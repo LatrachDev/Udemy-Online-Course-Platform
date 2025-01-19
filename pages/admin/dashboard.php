@@ -9,7 +9,39 @@
     require_once '../../includes/functions.php';
     
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['teacher_id'], $_POST['action'])) {
+        $teacher_id = $_POST['teacher_id'];
+        $action = $_POST['action'];
+    
+        if ($action === 'approve') 
+        {
+            
+            $query = "UPDATE users SET status = 'active' WHERE id = :id";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':id', $teacher_id);
+    
+            if ($stmt->execute()) {
+                header('Location: usermanagement.php');
+                exit;
+            } 
+        } 
+        elseif ($action === 'reject') 
+        {
+            
+            $query = "DELETE FROM users WHERE id = :id";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':id', $teacher_id);
+    
+            if ($stmt->execute()) 
+            {
+                header('Location: usermanagement.php');
+                exit;
+            } 
+        }
+    }
+
     $totalCourses = getTotalCourses($conn);
+    $teachers = fetchAllTeachers($conn);
 ?>
 
 <!DOCTYPE html>
@@ -165,26 +197,45 @@
                                     <tr class="text-left bg-gray-50">
                                         <th class="p-4 text-gray-600">Name</th>
                                         <th class="p-4 text-gray-600">Email</th>
-                                        <th class="p-4 text-gray-600">Specialization</th>
+                                        <th class="p-4 text-gray-600">Position</th>
                                         <th class="p-4 text-gray-600">Status</th>
                                         <th class="p-4 text-gray-600">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php foreach($teachers as $teacher) : ?>
+
                                     <tr class="border-t">
-                                        <td class="p-4 text-gray-800">John Doe</td>
-                                        <td class="p-4 text-gray-800">john@example.com</td>
-                                        <td class="p-4 text-gray-800">Web Development</td>
+                                        <td class="p-4 text-gray-800"><?= $teacher['name'] ?></td>
+                                        <td class="p-4 text-gray-800"><?= $teacher['email'] ?></td>
+                                        <td class="p-4 text-gray-800"><?= $teacher['role'] ?></td>
                                         <td class="p-4">
-                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending</span>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"><?= $teacher['status'] ?> </span>
                                         </td>
+
                                         <td class="p-4">
                                             <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Approve</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Reject</button>
+
+                                                <form action="dashboard.php" method="POST" class="inline">
+                                                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                                        Approve
+                                                    </button>
+                                                </form>
+
+                                                <form action="dashboard.php" method="POST" class="inline">
+                                                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
+                                                    <input type="hidden" name="action" value="reject">
+                                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                                                        Reject
+                                                    </button>
+                                                </form>
+
                                             </div>
                                         </td>
                                     </tr>
+                                    <?php endforeach ?>
                                 
                                 </tbody>
                             </table>
