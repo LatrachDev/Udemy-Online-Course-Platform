@@ -15,7 +15,7 @@
 
     function fetchAllTags($conn)
     {
-        $query = "SELECT name FROM tags";
+        $query = "SELECT id, name FROM tags";
         $stmt = $conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -189,6 +189,7 @@
                         <h2 class="text-xl font-bold text-gray-800">Tags</h2>
                     </div>
                     <div class="p-6">
+                        
                         <!-- add tags -->
                         <form action="addTags.php" method="POST">
                             <div class="mb-6">
@@ -212,18 +213,21 @@
                             <div class="flex flex-wrap gap-2">
                                 <?php foreach($tags as $tag) : ?>
 
-                                <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                    <?= $tag['name'] ?>
-                                    <button class="ml-2 hover:text-indigo-700">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </span>
+                                    <form action="deleteTags.php" method="POST" class="inline">
+                                        <input type="hidden" name="tag_id" value="<?= $tag['id'] ?>">
+                                        <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
+                                            <?= $tag['name'] ?>
+                                            <button type="submit" class="ml-2 hover:text-indigo-700">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </form>
 
                                 <?php endforeach ?>
-                               
+                                                           
                             </div>
                         </div>
                     </div>
