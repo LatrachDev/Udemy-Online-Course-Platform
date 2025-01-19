@@ -21,7 +21,7 @@
             $stmt->bindParam(':id', $teacher_id);
     
             if ($stmt->execute()) {
-                header('Location: usermanagement.php');
+                header('Location: dashboard.php');
                 exit;
             } 
         } 
@@ -203,39 +203,47 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($teachers as $teacher) : ?>
 
-                                    <tr class="border-t">
-                                        <td class="p-4 text-gray-800"><?= $teacher['name'] ?></td>
-                                        <td class="p-4 text-gray-800"><?= $teacher['email'] ?></td>
-                                        <td class="p-4 text-gray-800"><?= $teacher['role'] ?></td>
-                                        <td class="p-4">
-                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"><?= $teacher['status'] ?> </span>
-                                        </td>
-
-                                        <td class="p-4">
-                                            <div class="flex gap-2">
-
-                                                <form action="dashboard.php" method="POST" class="inline">
-                                                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
-                                                    <input type="hidden" name="action" value="approve">
-                                                    <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                                        Approve
-                                                    </button>
-                                                </form>
-
-                                                <form action="dashboard.php" method="POST" class="inline">
-                                                    <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                                                        Reject
-                                                    </button>
-                                                </form>
-
-                                            </div>
-                                        </td>
+                                    <?php if (empty($teachers)) : ?>
+                                    <tr>
+                                        <td colspan="5" class="p-4 text-center text-gray-800">No pending teacher requests.</td>
                                     </tr>
-                                    <?php endforeach ?>
+                                    <?php else : ?>
+                                        <?php foreach($teachers as $teacher) : ?>
+
+
+                                        <tr class="border-t">
+                                            <td class="p-4 text-gray-800"><?= $teacher['name'] ?></td>
+                                            <td class="p-4 text-gray-800"><?= $teacher['email'] ?></td>
+                                            <td class="p-4 text-gray-800"><?= $teacher['role'] ?></td>
+                                            <td class="p-4">
+                                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"><?= $teacher['status'] ?> </span>
+                                            </td>
+
+                                            <td class="p-4">
+                                                <div class="flex gap-2">
+
+                                                    <form action="dashboard.php" method="POST" class="inline">
+                                                        <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
+                                                        <input type="hidden" name="action" value="approve">
+                                                        <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                                            Approve
+                                                        </button>
+                                                    </form>
+
+                                                    <form action="dashboard.php" method="POST" class="inline">
+                                                        <input type="hidden" name="teacher_id" value="<?= $teacher['id'] ?>">
+                                                        <input type="hidden" name="action" value="reject">
+                                                        <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                                                            Reject
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 
                                 </tbody>
                             </table>
