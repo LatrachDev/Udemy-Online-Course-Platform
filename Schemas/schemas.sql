@@ -41,3 +41,5 @@ CREATE TABLE course_tags (
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
+
+ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active';
