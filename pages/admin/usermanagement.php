@@ -166,7 +166,10 @@
                                                 <form action="usermanagement.php" method="POST" class="inline">
                                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                                     <input type="hidden" name="new_status" value="<?= $user['status'] === 'active' ? 'banned' : 'active' ?>">
-                                                    <button type="submit" class="px-3 py-1 <?= $user['status'] === 'active' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' ?> rounded-full hover:bg-red-200 transition duration-300">
+                                                    <button type="submit" class="px-3 py-1 
+                                                        <?= $user['status'] === 'active' ? 'bg-red-100 text-red-800 hover:bg-red-200' : 
+                                                        'bg-green-100 text-green-800 hover:bg-green-200' ?> 
+                                                        rounded-full transition duration-300">
                                                         <?= $user['status'] === 'active' ? 'Suspend' : 'Activate' ?>
                                                     </button>
                                                 </form>

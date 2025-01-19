@@ -20,12 +20,22 @@
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    function fetchAllUsers($conn)
+    
+    function fetchAllTeachers($conn)
     {
-        $query = "SELECT * FROM users";
+        $query = "SELECT * FROM users WHERE role = 'teacher' AND status = 'pending'";
         $stmt = $conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    function fetchAllUsers($conn)
+    {
+        $query = "SELECT * FROM users WHERE role != 'admin' AND status != 'pending' ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 ?>
