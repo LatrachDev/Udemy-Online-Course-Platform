@@ -33,28 +33,36 @@ class User {
     }
 
     public function loginUser($email, $password) {
-        $query = "SELECT id, password, role FROM " . $this->table_name . " WHERE email = :email LIMIT 1";
+        $query = "SELECT id, name, password, role FROM " . $this->table_name . " WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
         $stmt->execute();
 
-        if ($stmt->rowCount() > 0) {
+        if ($stmt->rowCount() > 0) 
+        {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $row['name'];
             $hashed_password = $row['password'];
 
-            if (password_verify($password, $hashed_password)) {
+            if (password_verify($password, $hashed_password)) 
+            {
                 return [
                     'verify' => true,
                     'user_id' => $row['id'],
-                    'role' => $row['role']
+                    'role' => $row['role'],
+                    'name' => $row['name']
                 ];
-            } else {
+            } 
+            else 
+            {
                 return [
                     'verify' => false,
                     'message' => "Incorrect password."
                 ];
             }
-        } else {
+        } 
+        else
+        {
             return [
                 'verify' => false,
                 'message' => "User not found."
