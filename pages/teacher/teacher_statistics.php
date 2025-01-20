@@ -1,3 +1,13 @@
+<?php
+    session_start();
+
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') 
+    {
+        header('Location: /../errors/403.php');
+        exit;
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,7 +77,7 @@
                         </button>
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-full shadow-md border flex justify-center items-center font-bold bg-indigo-600 text-white">T</div>
-                            <span class="text-gray-700">Teacher</span>
+                            <span class="text-gray-700"><?= isset($_SESSION['name']) ? $_SESSION['name'] : 'Teacher' ?></span>
                         </div>
                     </div>
                 </div>
