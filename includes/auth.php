@@ -85,6 +85,7 @@ if (isset($_POST['login'])) {
             session_start();
             $_SESSION['user_id'] = $return['user_id'];
             $_SESSION['role'] = $return['role'];
+            $_SESSION['name'] = $return['name'];
 
             if ($return['role'] === 'admin') 
             {
@@ -98,6 +99,7 @@ if (isset($_POST['login'])) {
             }
             if ($return['role'] === 'teacher') 
             {
+                
                 header('Location: /teacher/teacher.php');
                 exit;
             }           
