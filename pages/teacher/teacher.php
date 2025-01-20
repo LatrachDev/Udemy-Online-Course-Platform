@@ -130,6 +130,14 @@
                                         placeholder="Enter the URL for the content">
                                 </div>
 
+                                <!-- Thumbnail URL -->
+                                <div>
+                                    <label for="thumbnail_url" class="block text-sm font-medium text-gray-700">Thumbnail URL</label>
+                                    <input type="url" id="thumbnail_url" name="thumbnail_url" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                                        placeholder="Enter the URL for the thumbnail">
+                                </div>
+
                                 <!-- Content Type -->
                                 <div>
                                     <label for="content_type" class="block text-sm font-medium text-gray-700">Content Type</label>

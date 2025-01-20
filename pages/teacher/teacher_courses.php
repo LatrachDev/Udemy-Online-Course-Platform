@@ -18,6 +18,7 @@
             course.id AS course_id,
             course.title,
             course.description,
+            course.thumbnail_url,
             course.content_type,
             category.name AS category_name,
             GROUP_CONCAT(CONCAT('#', tags.name) SEPARATOR ', ') AS tag_names,
@@ -125,6 +126,7 @@
                             <table class="w-full">
                                 <thead>
                                     <tr class="text-left bg-gray-50">
+                                        <th class="p-4 text-gray-600">Thumbnail</th>
                                         <th class="p-4 text-gray-600">Title</th>
                                         <th class="p-4 text-gray-600">Description</th>
                                         <th class="p-4 text-gray-600">Type</th>
@@ -139,6 +141,13 @@
                                 <?php foreach($courses as $course) : ?>
                                     <!-- Course 1 -->
                                     <tr class="border-t">
+                                        <td class="p-4">
+                                            <img 
+                                                src="<?= $course['thumbnail_url'] ?>" 
+                                                alt="course thumbnail"
+                                                class="w-16 h-16 object-cover rounded-lg"
+                                            >
+                                        </td>
                                         <td class="p-4 text-gray-800"><?= $course['title'] ?></td>
                                         <td class="p-4 text-gray-800"><?= $course['description'] ?></td>
                                         <td class="p-4 text-gray-800"><?= $course['content_type'] ?></td>

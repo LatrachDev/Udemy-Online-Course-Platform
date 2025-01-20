@@ -17,13 +17,19 @@
     $title = $_POST['title'];
     $description = $_POST['description'];
     $contentUrl = $_POST['content_url'];
+    $thumbnailUrl = $_POST['thumbnail_url'];
     $contentType = $_POST['content_type'];
     $categoryId = $_POST['category'];
     $teacherId = $_SESSION['user_id'];
     $tags = $_POST['tags'];
 
-    $stmt = $conn->prepare("INSERT INTO course (title, description, category_id, teacher_id) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$title, $description, $categoryId, $teacherId]);
+    // $stmt = $conn->prepare("INSERT INTO course (title, description, category_id, teacher_id) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("
+        INSERT INTO course (title, description, content_url, thumbnail_url, content_type, category_id, teacher_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([$title, $description, $contentUrl, $thumbnailUrl, $contentType, $categoryId, $teacherId]);
+    // $stmt->execute([$title, $description, $categoryId, $teacherId]);
     $courseId = $conn->lastInsertId(); 
 
     if ($contentType === 'video') 
