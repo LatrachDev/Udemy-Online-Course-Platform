@@ -42,6 +42,14 @@ CREATE TABLE course_tags (
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
 
+CREATE TABLE enrollments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    course_id INT NOT NULL,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE
+);
 
 ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active';
 ALTER TABLE course ADD COLUMN content_type ENUM('video', 'document') NOT NULL;
