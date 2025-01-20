@@ -2,7 +2,7 @@
     session_start();
 
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header('Location: errors/403.php');
+        header('Location: /../errors/403.php');
         exit;
     }
 
@@ -146,42 +146,53 @@
                 </div>
 
                 <!-- Categories Section -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-                    <div class="p-6 border-b">
-                        <h2 class="text-xl font-bold text-gray-800">Categories</h2>
-                    </div>
-                    <div class="p-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold text-gray-800">Categories</h2>
+                </div>
+                <div class="p-6">
+                    <!-- Add Category Form -->
+                    <form action="addCategory.php" method="POST">
+                        <div class="mb-6">
+                            <label for="categoryAdd" class="block text-sm font-medium text-gray-700 mb-2">Add New Category</label>
+                            <div class="flex gap-4">
+                                <input type="text" id="categoryAdd" name="category"
+                                    class="p-2 border flex-1 rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                                    placeholder="Enter category name (e.g., Web Development)">
+                                <button type="submit"
+                                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
+                                    Add Category
+                                </button>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500">Category names will be automatically trimmed.</p>
+                        </div>
+                    </form>
+
+                    <!-- Existing Categories -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Existing Categories</h3>
                         <div class="flex flex-wrap gap-2">
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Web Development
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Data Science
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
-                            <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
-                                Graphic Design
-                                <button class="ml-2 hover:text-indigo-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </span>
+                            <?php
+                            $categories = fetchAllCategories($conn); 
+                            foreach ($categories as $category) :
+                            ?>
+                                <form action="deleteCategory.php" method="POST" class="inline">
+                                    <input type="hidden" name="category_id" value="<?= $category['id'] ?>">
+                                    <span class="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">
+                                        <?= $category['name'] ?>
+                                        <button type="submit" class="ml-2 hover:text-indigo-700">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </form>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <!-- Tags Section -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
