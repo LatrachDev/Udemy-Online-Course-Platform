@@ -1,3 +1,41 @@
+<?php
+    session_start();
+
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') 
+    {
+        header('Location: /../errors/403.php');
+        exit;
+    }
+
+    require_once '../../Config/Database.php';
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    $teacherId = $_SESSION['user_id'];
+
+    $stmt = $conn->prepare("
+            SELECT 
+            course.id AS course_id,
+            course.title,
+            course.description,
+            course.content_type,
+            category.name AS category_name,
+            GROUP_CONCAT(CONCAT('#', tags.name) SEPARATOR ', ') AS tag_names,
+            GROUP_CONCAT(users.name SEPARATOR ', ') AS enrolled_users
+        FROM course
+        JOIN category ON course.category_id = category.id
+        LEFT JOIN course_tags ON course.id = course_tags.course_id
+        LEFT JOIN tags ON course_tags.tag_id = tags.id
+        LEFT JOIN enrollments ON course.id = enrollments.course_id
+        LEFT JOIN users ON enrollments.user_id = users.id
+        WHERE course.teacher_id = ?
+        GROUP BY course.id
+    ");
+
+    $stmt->execute([$teacherId]);
+    $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,7 +105,7 @@
                         </button>
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-full shadow-md border flex justify-center items-center font-bold bg-indigo-600 text-white">T</div>
-                            <span class="text-gray-700">Teacher</span>
+                            <span class="text-gray-700"><?= isset($_SESSION['name']) ? $_SESSION['name'] : 'Teacher' ?></span>
                         </div>
                     </div>
                 </div>
@@ -88,45 +126,47 @@
                                 <thead>
                                     <tr class="text-left bg-gray-50">
                                         <th class="p-4 text-gray-600">Title</th>
+                                        <th class="p-4 text-gray-600">Description</th>
+                                        <th class="p-4 text-gray-600">Type</th>
                                         <th class="p-4 text-gray-600">Category</th>
                                         <th class="p-4 text-gray-600">Tags</th>
+                                        <th class="p-4 text-gray-600">Enrollments</th>
                                         <th class="p-4 text-gray-600">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+
+                                <?php foreach($courses as $course) : ?>
                                     <!-- Course 1 -->
                                     <tr class="border-t">
-                                        <td class="p-4 text-gray-800">Advanced JavaScript Masterclass</td>
-                                        <td class="p-4 text-gray-800">Web Development</td>
+                                        <td class="p-4 text-gray-800"><?= $course['title'] ?></td>
+                                        <td class="p-4 text-gray-800"><?= $course['description'] ?></td>
+                                        <td class="p-4 text-gray-800"><?= $course['content_type'] ?></td>
+                                        <td class="p-4 text-gray-800"><?= $course['category_name'] ?></td>
                                         <td class="p-4 text-gray-800">
-                                            <span class="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">JavaScript</span>
-                                            <span class="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">Frontend</span>
+                                            <span class="inline-flex items-center px-2 my-1 py-1 bg-indigo-100 text-indigo-600  text-sm"><?= !empty($course['tag_names']) ? $course['tag_names'] : 'No tags' ?></span>
                                         </td>
+                                        
+                                        <td class="p-4 text-gray-800">
+                                            <?php if (!empty($course['enrolled_users'])) : ?>
+                                                <?= htmlspecialchars($course['enrolled_users']) ?>
+                                            <?php else : ?>
+                                                <span class="text-gray-500">No enrollments</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        
+                                        
                                         <td class="p-4">
                                             <div class="flex gap-2">
                                                 <button class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button>
                                                 <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
-                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Enrollments</button>
                                             </div>
                                         </td>
                                     </tr>
 
-                                    <!-- Course 2 -->
-                                    <tr class="border-t">
-                                        <td class="p-4 text-gray-800">Python for Data Science</td>
-                                        <td class="p-4 text-gray-800">Data Science</td>
-                                        <td class="p-4 text-gray-800">
-                                            <span class="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">Python</span>
-                                            <span class="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">Data Analysis</span>
-                                        </td>
-                                        <td class="p-4">
-                                            <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
-                                                <button class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600">Enrollments</button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <?php endforeach; ?>
+                                    
+
                                 </tbody>
                             </table>
                         </div>

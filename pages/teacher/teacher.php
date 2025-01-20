@@ -1,3 +1,25 @@
+<?php
+    session_start();
+
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+        header('Location: /../errors/403.php');
+        exit;
+    }
+
+    require_once '../../includes/functions.php';
+    require_once '../../Config/Database.php';
+    require_once '../../Classes/Tags.php';
+    require_once '../../Classes/Category.php';
+        
+    $tags = new Tags($conn);
+    $allTags = $tags->fetchAllTags();
+
+    $categories = new Category($conn); 
+    $allCategories = $categories->fetchAllCategories();
+
+    $categories = fetchAllCategories($conn);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,7 +89,8 @@
                         </button>
                         <div class="flex items-center gap-2">
                             <div class="w-10 h-10 rounded-full shadow-md border flex justify-center items-center font-bold bg-indigo-600 text-white">T</div>
-                            <span class="text-gray-700">Teacher</span>
+                            
+                            <span class="text-gray-700"><?= isset($_SESSION['name']) ? $_SESSION['name'] : 'Teacher' ?></span>
                         </div>
                     </div>
                 </div>
@@ -83,7 +106,7 @@
                         <h2 class="text-xl font-bold text-gray-800">Add New Course</h2>
                     </div>
                     <div class="p-6">
-                        <form action="add_course.php" method="POST" enctype="multipart/form-data">
+                        <form action="addCourse.php" method="POST" enctype="multipart/form-data">
                             <div class="space-y-4">
                                 <!-- Title -->
                                 <div>
@@ -99,11 +122,22 @@
                                         class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"></textarea>
                                 </div>
 
-                                <!-- Content (Video or Document) -->
+                                <!-- Content URL -->
                                 <div>
-                                    <label for="content" class="block text-sm font-medium text-gray-700">Content (Video or Document)</label>
-                                    <input type="file" id="content" name="content" accept="video/*, .pdf, .doc, .docx" required
+                                    <label for="content_url" class="block text-sm font-medium text-gray-700">Content URL</label>
+                                    <input type="url" id="content_url" name="content_url" required
+                                        class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                                        placeholder="Enter the URL for the content">
+                                </div>
+
+                                <!-- Content Type -->
+                                <div>
+                                    <label for="content_type" class="block text-sm font-medium text-gray-700">Content Type</label>
+                                    <select id="content_type" name="content_type" required
                                         class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
+                                        <option value="video">Video</option>
+                                        <option value="document">Document</option>
+                                    </select>
                                 </div>
 
                                 <!-- Tags (Select Existing Tags) -->
@@ -111,25 +145,23 @@
                                     <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
                                     <select id="tags" name="tags[]" multiple
                                         class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
-                                        <?php
-                                        // Example PHP code to fetch existing tags from the database
-                                        $tags = ["JavaScript", "Python", "Web Development", "Data Science", "Frontend", "Backend"];
-                                        foreach ($tags as $tag) {
-                                            echo "<option value='$tag'>$tag</option>";
-                                        }
-                                        ?>
+                                        <?php foreach ($allTags as $tag) : ?>
+                                            <option value="<?= $tag['id'] ?>"> <?= $tag['name'] ?> </option>
+                                        <?php endforeach; ?>
                                     </select>
                                     <p class="mt-1 text-sm text-gray-500">Hold <kbd>Ctrl</kbd> (Windows) or <kbd>Command</kbd> (Mac) to select multiple tags.</p>
                                 </div>
 
                                 <!-- Category -->
                                 <div>
-                                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                                    <for="category" class="block text-sm font-medium text-gray-700">Category</for=>
                                     <select id="category" name="category" required
                                         class="mt-1 p-2 w-full border rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600">
-                                        <option value="Web Development">Web Development</option>
-                                        <option value="Data Science">Data Science</option>
-                                        <option value="Graphic Design">Graphic Design</option>
+                        
+                                        <?php foreach ($categories as $category) : ?>
+                                            <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
+                                        <?php endforeach; ?>
+                        
                                     </select>
                                 </div>
 
