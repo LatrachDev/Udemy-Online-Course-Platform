@@ -53,3 +53,5 @@ CREATE TABLE enrollments (
 
 ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active';
 ALTER TABLE course ADD COLUMN content_type ENUM('video', 'document') NOT NULL;
+ALTER TABLE course ADD COLUMN thumbnail_url VARCHAR(255) NOT NULL;
+ALTER TABLE course ADD COLUMN content_url VARCHAR(255) NOT NULL;
