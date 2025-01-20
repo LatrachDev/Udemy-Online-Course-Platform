@@ -42,4 +42,6 @@ CREATE TABLE course_tags (
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
 
+
 ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active';
+ALTER TABLE course ADD COLUMN content_type ENUM('video', 'document') NOT NULL;
