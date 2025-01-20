@@ -3,52 +3,26 @@
 require_once 'Content.php';
 class DocumentContent extends Content
 {
-    private $path;
-    private $fileSize;
+    private $documentUrl;
 
-    public function __construct($db, $courseId, $path, $fileSize)
+    public function __construct($db, $courseId, $documentUrl)
     {
         parent::__construct($db, $courseId);
-
-        if (empty($path) || empty($fileSize)) {
-            throw new InvalidArgumentException("Path and file size are required.");
-        }
-        
-        $this->path = $path;
-        $this->fileSize = $fileSize;
+        $this->documentUrl = $documentUrl;
     }
 
     public function save()
     {
-        $sql = "INSERT INTO contents (course_id, type) VALUES (?, 'document')";
-        $params = [
-            $this->courseId
-        ];
-
-        $this->db->query($sql, $params);
-
-        $contentId = $this->db->lastInsertId();
-
-        $sql = "INSERT INTO document_contents (content_id, file_path, file_size) VALUES (?, ?, ?)";
-        $params = [
-            $contentId,
-            $this->path,
-            $this->fileSize
-        ];
-
-        $this->db->query($sql, $params);
-
-        return $this->db->lastInsertId();
+        $stmt = $this->db->prepare("INSERT INTO course_content (course_id, content_type, content_url) VALUES (?, 'document', ?)");
+        $stmt->execute([$this->courseId, $this->documentUrl]);
     }
 
     public function display($courseId)
     {
-        $sql = "SELECT title , DESCRIPTION , TYPE , file_path FROM courses
-        INNER JOIN contents ON courses.id = contents.course_id
-        INNER JOIN document_contents ON contents.id = document_contents.content_id
-        WHERE courses.id = ?";
+        $stmt = $this->db->prepare("SELECT content_url FROM course_content WHERE course_id = ? AND content_type = 'document'");
+        $stmt->execute([$courseId]);
+        $documentUrl = $stmt->fetchColumn();
 
-        $result = $this->db->fetch($sql, [$courseId]);
-        return $result;
+        return "<a href='$documentUrl' target='_blank'>Download Document</a>";
     }
 }
