@@ -20,6 +20,15 @@
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    
+    function fetchAllCategories($conn)
+    {
+        $query = "SELECT id, name FROM category";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
     function fetchAllTeachers($conn)
     {
@@ -36,6 +45,5 @@
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
 ?>
