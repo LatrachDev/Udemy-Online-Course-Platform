@@ -33,7 +33,7 @@ class User {
     }
 
     public function loginUser($email, $password) {
-        $query = "SELECT id, name, password, role FROM " . $this->table_name . " WHERE email = :email LIMIT 1";
+        $query = "SELECT id, name, password, role, status FROM " . $this->table_name . " WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
         $stmt->execute();
@@ -50,7 +50,8 @@ class User {
                     'verify' => true,
                     'user_id' => $row['id'],
                     'role' => $row['role'],
-                    'name' => $row['name']
+                    'name' => $row['name'],
+                    'status' => $row['status']
                 ];
             } 
             else 
