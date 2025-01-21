@@ -35,6 +35,9 @@
 
     $stmt->execute([$teacherId]);
     $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $teacherStatus = $_SESSION['status'];
+
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +117,16 @@
 
             <!-- Teacher Dashboard Content -->
             <main class="p-6">
+
+            <?php if ($teacherStatus === 'pending') : ?>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+        
+                <p class="font-bold">Waiting for Approval</p>
+                    <p>Your request to become a teacher is pending. Please wait for admin approval.</p>
+                </div>
+            
+            <?php else : ?>
+
                 <h1 class="text-2xl font-bold text-gray-800 mb-6">Course Management</h1>
 
                 <!-- Manage Courses Section -->
@@ -181,6 +194,8 @@
                         </div>
                     </div>
                 </div>
+
+            <?php endif; ?>
 
             </main>
         </div>
