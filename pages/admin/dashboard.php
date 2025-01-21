@@ -7,19 +7,27 @@
     }
 
     require_once '../../includes/functions.php';
-    
+    require_once '../../Config/Database.php';
+    require_once '../../Classes/User.php';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['teacher_id'], $_POST['action'])) {
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    $user = new User($conn);
+    
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['teacher_id'], $_POST['action'])) 
+    {
         $teacher_id = $_POST['teacher_id'];
         $action = $_POST['action'];
-    
+        
         if ($action === 'approve') 
         {
             
             $query = "UPDATE users SET status = 'active' WHERE id = :id";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id', $teacher_id);
-    
+            
             if ($stmt->execute()) {
                 header('Location: dashboard.php');
                 exit;
@@ -31,7 +39,7 @@
             $query = "DELETE FROM users WHERE id = :id";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id', $teacher_id);
-    
+            
             if ($stmt->execute()) 
             {
                 header('Location: usermanagement.php');
@@ -39,7 +47,8 @@
             } 
         }
     }
-
+    
+    $topTeachers = $user->getTopTeachers();
     $totalCourses = getTotalCourses($conn);
     $teachers = fetchAllTeachers($conn);
 ?>
@@ -178,9 +187,16 @@
                             </span>
                         </div>
                         <div class="space-y-2">
-                            <p class="text-gray-800">1. Sarah Johnson</p>
-                            <p class="text-gray-800">2. Michael Chen</p>
-                            <p class="text-gray-800">3. Emma Wilson</p>
+                            <?php if (empty($topTeachers)) : ?>
+                                <p class="text-gray-800">No top teachers found.</p>
+                            <?php else : ?>
+                                <?php foreach ($topTeachers as $teacher) : ?>
+                                    <p class="text-gray-800">
+                                        <?= $teacher['name'] ?> (<?= $teacher['student_count'] ?> students)
+                                    </p>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </div>
