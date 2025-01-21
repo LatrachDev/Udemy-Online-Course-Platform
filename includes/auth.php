@@ -86,6 +86,8 @@ if (isset($_POST['login'])) {
             $_SESSION['user_id'] = $return['user_id'];
             $_SESSION['role'] = $return['role'];
             $_SESSION['name'] = $return['name'];
+            $_SESSION['status'] = $return['status'];
+
 
             if ($return['role'] === 'admin') 
             {
