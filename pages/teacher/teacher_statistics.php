@@ -7,8 +7,21 @@
         exit;
     }
 
+    require_once '../../Config/Database.php';
+    require_once '../../Classes/Course.php';
+
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    $course = new Course($conn);
+    
     $teacherStatus = $_SESSION['status'];
 
+    $teacher_id = $_SESSION['user_id'];
+
+    $totalCourses = $course->getTotalCourses($teacher_id);
+
+    $totalEnrolledStudents = $course->getTotalEnrolledStudents($teacher_id);
 
 
 ?>
@@ -109,13 +122,13 @@
                             <!-- Number of Students -->
                             <div class="bg-indigo-50 p-6 rounded-lg">
                                 <h3 class="text-lg font-semibold text-indigo-600">Number of Enrolled Students</h3>
-                                <p class="text-3xl font-bold text-gray-800 mt-2">1,234</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2"><?= $totalEnrolledStudents ?></p>
                             </div>
 
                             <!-- Number of Courses -->
                             <div class="bg-indigo-50 p-6 rounded-lg">
                                 <h3 class="text-lg font-semibold text-indigo-600">Number of Courses</h3>
-                                <p class="text-3xl font-bold text-gray-800 mt-2">15</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2"><?= $totalCourses ?></p>
                             </div>
 
                             <!-- Other Statistics -->

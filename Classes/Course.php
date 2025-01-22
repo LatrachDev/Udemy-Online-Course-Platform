@@ -57,6 +57,32 @@ class Course
         $stmt->execute([$courseId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getTotalCourses($teacher_id) 
+    {
+        $query = "SELECT COUNT(*) AS total_courses FROM course WHERE teacher_id = :teacher_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total_courses'];
+    }
+
+    public function getTotalEnrolledStudents($teacher_id) 
+    {
+        $query = "
+            SELECT COUNT(DISTINCT e.user_id) AS total_students
+            FROM enrollments e
+            JOIN course c ON e.course_id = c.id
+            JOIN users u ON e.user_id = u.id
+            WHERE c.teacher_id = :teacher_id AND u.role = 'student'
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total_students'];
+    }
 }
 
 ?>
