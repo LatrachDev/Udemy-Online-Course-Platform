@@ -21,8 +21,8 @@
             course.thumbnail_url,
             course.content_type,
             category.name AS category_name,
-            GROUP_CONCAT(CONCAT('#', tags.name) SEPARATOR ', ') AS tag_names,
-            GROUP_CONCAT(users.name SEPARATOR ', ') AS enrolled_users
+            GROUP_CONCAT(DISTINCT CONCAT('#', tags.name) SEPARATOR ', ') AS tag_names,
+            GROUP_CONCAT(DISTINCT users.name SEPARATOR ', ') AS enrolled_users
         FROM course
         JOIN category ON course.category_id = category.id
         LEFT JOIN course_tags ON course.id = course_tags.course_id
@@ -180,8 +180,13 @@
                                         
                                         <td class="p-4">
                                             <div class="flex gap-2">
-                                                <button class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button>
-                                                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                                                <a href="edit_course.php?course_id=<?= $course['course_id'] ?>" class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</a>
+                                                
+                                                <form action="delete_course.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                                    <input type="hidden" name="course_id" value="<?= $course['course_id'] ?>">
+                                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                                                </form>
+
                                             </div>
                                         </td>
                                     </tr>
