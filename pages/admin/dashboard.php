@@ -47,6 +47,20 @@
             } 
         }
     }
+
+    $stmt = $conn->prepare("
+        SELECT 
+            course.id AS course_id,
+            course.title,
+            COUNT(enrollments.id) AS enrollment_count
+        FROM course
+        LEFT JOIN enrollments ON course.id = enrollments.course_id
+        GROUP BY course.id
+        ORDER BY enrollment_count DESC
+        LIMIT 1
+    ");
+    $stmt->execute();
+    $mostPopularCourse = $stmt->fetch(PDO::FETCH_ASSOC);
     
     $topTeachers = $user->getTopTeachers();
     $totalCourses = getTotalCourses($conn);
@@ -131,7 +145,7 @@
             <!-- Dashboard Content -->
             <main class="p-6">
                 <!-- Stats Overview -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <!-- Total Courses -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between mb-4">
@@ -146,20 +160,6 @@
                         <p class="text-2xl font-bold text-gray-800"><?= $totalCourses ?></p>
                     </div>
 
-                    <!-- Distribution by Category -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-gray-500">Distribution by Category</h3>
-                            <span class="text-indigo-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">5 Categories</p>
-                    </div>
-
                     <!-- Course with Most Students -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between mb-4">
@@ -171,8 +171,8 @@
                                 </svg>
                             </span>
                         </div>
-                        <p class="text-2xl font-bold text-gray-800">JavaScript Masterclass</p>
-                        <p class="text-sm text-gray-500">2,334 students</p>
+                        <p class="text-2xl font-bold text-gray-800"><?= $mostPopularCourse['title'] ?></p>
+                        <p class="text-sm text-gray-500"><?= $mostPopularCourse['enrollment_count'] ?>  enrollments.</p>
                     </div>
 
                     <!-- Top 3 Teachers -->
