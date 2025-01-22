@@ -1,43 +1,43 @@
 <?php
-session_start();
+    session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    header('Location: /../../errors/403.php');
-    exit;
-}
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+        header('Location: /../../errors/403.php');
+        exit;
+    }
 
-require_once '../../Config/Database.php';
-require_once '../../Classes/Course.php';
-require_once '../../Classes/Enrollment.php';
+    require_once '../../Config/Database.php';
+    require_once '../../Classes/Course.php';
+    require_once '../../Classes/Enrollment.php';
 
-$db = new Database();
-$conn = $db->getConnection();
+    $db = new Database();
+    $conn = $db->getConnection();
 
-// Check if the course ID is provided in the URL
-if (!isset($_GET['course_id'])) {
-    header('Location: my_course.php');
-    exit;
-}
+    if (!isset($_GET['course_id'])) 
+    {
+        header('Location: my_course.php');
+        exit;
+    }
 
-$courseId = $_GET['course_id'];
+    $courseId = $_GET['course_id'];
 
-// Fetch course details
-$course = new Course($conn);
-$courseDetails = $course->getCourseById($courseId);
+    $course = new Course($conn);
+    $courseDetails = $course->getCourseById($courseId);
 
-if (!$courseDetails) {
-    header('Location: my_course.php');
-    exit;
-}
+    if (!$courseDetails) 
+    {
+        header('Location: my_course.php');
+        exit;
+    }
 
-// Fetch enrolled courses to verify the student is enrolled in this course
-$enrollment = new Enrollment($conn);
-$studentId = $_SESSION['user_id'];
+    $enrollment = new Enrollment($conn);
+    $studentId = $_SESSION['user_id'];
 
-if (!$enrollment->isEnrolled($studentId, $courseId)) {
-    header('Location: my_course.php');
-    exit;
-}
+    if (!$enrollment->isEnrolled($studentId, $courseId)) 
+    {
+        header('Location: my_course.php');
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
